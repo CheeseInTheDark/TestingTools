@@ -1,0 +1,54 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+configurations
+{
+	deployerJars
+}
+
+repositories
+{
+	maven
+	{
+		url "http://www.jmlproductions.net/artifacts"
+		name "jmlproductionsRepo"
+	}
+
+
+	mavenCentral()
+}
+
+dependencies
+{
+	compile 'org.hamcrest:hamcrest-all:1.3'
+	compile 'org.mockito:mockito-all:1.9.+'
+	testCompile 'junit:junit:4.11'
+
+	deployerJars 'org.apache.maven.wagon:wagon-ftp:2.2'
+}
+
+artifacts
+{
+	archives jar
+}
+
+uploadArchives
+{
+	repositories
+	{
+		mavenDeployer
+		{
+			configuration = configurations.deployerJars
+			repository(userName: ftpUser, password: ftpPassword)
+			{
+				url "ftp://jmlproductions.net/httpdocs/artifacts"
+			}
+			pom.version = "latest"
+			pom.groupId = "net.jmlproductions"
+			pom.artifactId = "testing-tools"
+		}
+	}
+}
+
+buildDir = "../bin"
