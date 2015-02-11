@@ -14,8 +14,6 @@ repositories
 		url "http://www.jmlproductions.net/artifacts"
 		name "jmlproductionsRepo"
 	}
-
-
 	mavenCentral()
 }
 
@@ -28,9 +26,23 @@ dependencies
 	deployerJars 'org.apache.maven.wagon:wagon-ftp:2.2'
 }
 
-artifacts
+sourceSets
 {
-	archives jar
+	main
+	{
+		java
+		{
+			srcDir 'src'
+		}
+	}
+	test
+	{
+		java
+		{
+			srcDir 'test'
+		}
+	}
+
 }
 
 uploadArchives
@@ -40,9 +52,9 @@ uploadArchives
 		mavenDeployer
 		{
 			configuration = configurations.deployerJars
-			repository(userName: ftpUser, password: ftpPassword)
+			repository(url: "ftp://jmlproductions.net/httpdocs/artifacts")	
 			{
-				url "ftp://jmlproductions.net/httpdocs/artifacts"
+				authentication(userName: ftpUser, password: ftpPassword)			
 			}
 			pom.version = "latest"
 			pom.groupId = "net.jmlproductions"
