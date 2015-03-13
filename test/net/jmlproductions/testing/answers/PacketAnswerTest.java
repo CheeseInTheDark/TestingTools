@@ -21,7 +21,7 @@ import org.mockito.Mock;
 
 public class PacketAnswerTest
 {
-	private DatagramPacket packet;
+	private DatagramPacket packetForAnswer;
 	
 	private byte[] data = { 0x00 };
 	
@@ -38,45 +38,49 @@ public class PacketAnswerTest
 	{
 		initMocks(this);
 		
-		packet = new DatagramPacket(data, data.length, address, 1234);
+		packetForAnswer = new DatagramPacket(data, data.length, address, 1234);
 	}
 	
 	@Test
 	public void shouldSetPacketData() throws IOException
 	{
-		runAnswer();
+		DatagramPacket resultingPacket = runAnswer();
 		
-		assertThat(packet.getData(), sameInstance(data));
+		assertThat(resultingPacket.getData(), sameInstance(data));
 	}
 	
 	@Test
 	public void shouldSetPacketDataLength() throws IOException
 	{
-		runAnswer();
+		DatagramPacket resultingPacket = runAnswer();
 		
-		assertThat(packet.getLength(), is(data.length));
+		assertThat(resultingPacket.getLength(), is(data.length));
 	}
 	
 	@Test
 	public void shouldSetPacketAddress() throws IOException
 	{
-		runAnswer();
+		DatagramPacket resultingPacket = runAnswer();
 		
-		assertThat(packet.getAddress(), sameInstance(address));
+		assertThat(resultingPacket.getAddress(), sameInstance(address));
 	}
 	
 	@Test
 	public void shouldSetPacketPort() throws IOException
 	{
-		runAnswer();
+		DatagramPacket resultingPacket = runAnswer();
 		
-		assertThat(packet.getPort(), is(port));
+		assertThat(resultingPacket.getPort(), is(port));
 	}
 	
-	private void runAnswer() throws IOException
+	private DatagramPacket runAnswer() throws IOException
 	{
-		doAnswer(setReceivedPacketTo(packet)).when(socket).receive(argThat(any(DatagramPacket.class)));
+		DatagramPacket resultingPacket = new DatagramPacket(new byte[0], 0);
 		
-		socket.toString();
+		doAnswer(setReceivedPacketTo(packetForAnswer)).when(socket).receive(argThat(any(DatagramPacket.class)));
+		
+		socket.receive(resultingPacket);
+		
+		return resultingPacket;
 	}
 }
